@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+    <style>
+        fieldset {
+            max-width: 8%;
+            max-height: 10%;
+            margin: 0 auto;
+        }
+        h1, p {
+            text-align: center;
+        }
+        form {
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ascii-art-web</h1>
+    <p>Welcome to <b>Ascii-art-web</b>; a web app designed to output grapghical art coresponding to user input</p>
+
+    <form action="/ascii-art" method="POST">
+        <fieldset id="banners">
+            <legend>Choose a Banner</legend>
+            <input name="banner" type="radio" value="standard" id="standard" checked/><label for="standard">Standard</label><br>
+            <input name="banner" type="radio" value="shadow" id="shadow" /><label for="shadow">Shadow</label><br>
+            <input name="banner" type="radio" value="thinkertoy" id="thinkertoy" /><label for="thinkertoy">Thinkertoy</label>
+        </fieldset>
+            <label>Input text<br>
+                <textarea row="20" cols="60" name="input" required></textarea>
+            </label>
+            <br>
+        <input type="submit" value="Produce Art"/>
+    </form>
+    <p><a href="/about">About</a></p>
+</body>
+</html>
