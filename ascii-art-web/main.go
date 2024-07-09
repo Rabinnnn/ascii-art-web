@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	
 	"html/template"
 	"log"
 	"net/http"
@@ -13,12 +13,21 @@ import (
 func main() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/ascii-art", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "405 (Method Not Allowed)", http.StatusMethodNotAllowed)
+			return
+		}
+
 		tmpl := template.Must(template.ParseFiles("templates/result.html"))
 		err := r.ParseForm()
 		if err != nil {
-			fmt.Fprintf(w, "Error aparsing the form data")
+			http.Error(w, "400 (Bad Request)", http.StatusBadRequest)
 			return
 		}
+		// if err != nil {
+		// 	fmt.Fprintf(w, "Error aparsing the form data")
+		// 	return
+		// }
 		bannerFile := r.FormValue("banner")
 		input := r.FormValue("input")
 		// fmt.Println(input)
@@ -28,6 +37,7 @@ func main() {
 		// w.Write([]byte(ascii))
 	})
 
+	log.Println("Server listening on http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal(err)
@@ -39,44 +49,32 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			_, err := os.Stat("templates/test.html")
 			if os.IsNotExist(err) {
-				fmt.Fprintf(w, "Not Found")
-				return
+				http.NotFound(w, r) // Use built-in handler for 404
+                return
 			}
 			tpl := template.Must(template.ParseFiles("templates/test.html"))
 			tpl.Execute(w, nil)
 			return
 		}
-	}
-	if r.URL.Path == "/about" || r.URL.Path == "/About" {
+	}else if r.URL.Path == "/about" || r.URL.Path == "/About" {
 		if r.Method == http.MethodGet {
 			_, err := os.Stat("templates/about.html")
 			if os.IsNotExist(err) {
-				fmt.Fprintf(w, "Not Found")
-				return
+				http.NotFound(w, r) 
+                return
 			}
 			tpl := template.Must(template.ParseFiles("templates/about.html"))
 			tpl.Execute(w, nil)
 			return
 		}
-	}
-	// 	else if r.Method == http.MethodPost {
-	// 		err := r.ParseForm()
-	// 		if err != nil {
-	// 			fmt.Fprintf(w, "Error aparsing the form data")
-	// 			return
-	// 		}
-	// 		bannerFile := r.FormValue("banner")
-	// 		_, errr := os.Stat(bannerFile + ".txt")
-	// 		if os.IsNotExist(errr) {
-	// 		}
-	// 		input := r.FormValue("input")
-	// 		fmt.Fprintf(w, "%s\n", input)
-	// 		fmt.Fprintf(w, "%s\n", bannerFile)
-	// 		tpl := template.Must(template.ParseFiles("templates/test.html"))
-	// 		tpl.Execute(w, nil)
-	// 	} else {
-	// 		fmt.Fprintf(w, "Wrong request method")
-	// 	}
-	// }
-	// fmt.Fprintf(w, "Bad request")
+	} else {
+        // Handle unexpected methods or paths
+        if r.Method == http.MethodGet {
+            http.NotFound(w, r) // Use built-in handler for 404
+            return
+        }
+        http.Error(w, "400 (Bad Request)", http.StatusBadRequest) // Clear error message for 400
+        return
+    }
+http.Error(w, "500 (Internal Server Error)", http.StatusInternalServerError)
 }
