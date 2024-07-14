@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"fmt"
 
 	asciiart "ascii-art-web/ascii-art"
 )
@@ -64,6 +65,15 @@ func HandleASCIIArt(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing banner or input", http.StatusBadRequest)
 		return
 	}
+
+	//if the specified banner file is missing return status code 500
+	_, error := os.Stat(bannerFile)
+	if os.IsNotExist(error){
+		errorMsg := fmt.Sprintf("The banner file %s is missing", bannerFile)
+		http.Error(w, errorMsg, http.StatusInternalServerError)
+		return
+	}
+	
 
 	if containsIllegalCharacters(input) {
 		http.Error(w, "Input contains illegal characters: Status 400: Bad Request", http.StatusBadRequest)
