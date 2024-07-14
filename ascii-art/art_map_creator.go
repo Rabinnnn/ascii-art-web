@@ -10,7 +10,7 @@ import (
 func BannerArt(s string) map[int][]string {
 	var myMap = make(map[int][]string)
 	var slice []string
-	CheckStatus(s)
+	//CheckStatus(s)
 	file, er := os.Open(s)
 	if er != nil {
 		fmt.Println("Error opening file. Check file")

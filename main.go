@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"fmt"
 
 	asciiart "ascii-art-web/ascii-art"
 )
@@ -67,10 +66,9 @@ func HandleASCIIArt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//if the specified banner file is missing return status code 500
-	_, error := os.Stat(bannerFile)
+	_, error := os.Stat(asciiart.FileName(bannerFile))
 	if os.IsNotExist(error){
-		errorMsg := fmt.Sprintf("The banner file %s is missing", bannerFile)
-		http.Error(w, errorMsg, http.StatusInternalServerError)
+		http.Error(w,"The specified banner file is missing!" , http.StatusInternalServerError)
 		return
 	}
 	
